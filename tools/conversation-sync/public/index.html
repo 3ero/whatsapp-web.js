@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>WhatsApp · Markdown archive</title>
+        <link rel="stylesheet" href="/style.css" />
+        <script src="/app.js" defer></script>
+    </head>
+    <body>
+        <main>
+            <p class="eyebrow">PRIVATE CONVERSATION ARCHIVE</p>
+            <h1>Your conversations,<br />in Markdown.</h1>
+            <p class="intro">
+                One file per conversation, kept up to date in
+                <code>Messags</code>.
+            </p>
+            <section aria-live="polite">
+                <h2 id="phase">Connecting to the service…</h2>
+                <p id="detail">Checking the WhatsApp connection.</p>
+                <img
+                    id="qr"
+                    alt="Scan this QR code from WhatsApp Linked devices"
+                    hidden
+                />
+                <p id="pairing-help" hidden>
+                    On your phone, open WhatsApp → Settings → Linked devices →
+                    Link a device.
+                </p>
+                <div class="stats">
+                    <p>
+                        <strong id="chats">—</strong><span>conversations</span>
+                    </p>
+                    <p>
+                        <strong id="messages">—</strong
+                        ><span>messages saved</span>
+                    </p>
+                    <p>
+                        <strong id="interval">—</strong
+                        ><span>refresh interval</span>
+                    </p>
+                </div>
+                <p id="last-sync">Waiting for the first import.</p>
+                <p id="error" role="alert"></p>
+            </section>
+            <section>
+                <h2>Conversation files</h2>
+                <p>
+                    The first import may take a while. Files appear as each
+                    conversation is saved.
+                </p>
+                <ul id="files"></ul>
+            </section>
+            <footer>
+                Only history available to WhatsApp Web can be captured.
+                Attachments are described in the transcript. Observed edits and
+                deletions update the current file; previous Git commits retain
+                previous versions.
+            </footer>
+        </main>
+    </body>
+</html>

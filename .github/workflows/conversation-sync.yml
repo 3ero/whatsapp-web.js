@@ -1,0 +1,42 @@
+name: Publish private conversation Markdown
+
+on:
+    schedule:
+        - cron: '*/5 * * * *'
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+concurrency:
+    group: private-conversation-publication
+    cancel-in-progress: false
+
+jobs:
+    publish:
+        if: github.event_name == 'workflow_dispatch' || vars.SYNC_ENABLED == 'true'
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  ref: main
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 22
+            - name: Download the archive after checking repository privacy
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+                  SYNC_URL: ${{ secrets.SYNC_URL }}
+                  SYNC_ACCESS_TOKEN: ${{ secrets.SYNC_ACCESS_TOKEN }}
+              run: node tools/conversation-sync/publish-snapshot.js
+            - name: Commit changed conversations
+              shell: bash
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  find Messags -maxdepth 1 -type f -name '*.md' -print0 | xargs -0 -r git add -f --
+                  if ! git diff --cached --quiet -- Messags; then
+                    git commit -m "chore: refresh private conversation Markdown"
+                    git push origin HEAD:main
+                  fi

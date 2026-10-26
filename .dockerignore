@@ -1,0 +1,10 @@
+.git
+**/node_modules
+.env
+.env.*
+.conversation-sync
+.wwebjs_auth
+.wwebjs_cache
+Messags
+docs
+tests

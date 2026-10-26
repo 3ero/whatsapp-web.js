@@ -16,13 +16,33 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v6
 
-            - name: Install Node.js v20
+            - name: Install Node.js v22
               uses: actions/setup-node@v6
               with:
-                  node-version: 20
+                  node-version: 22
 
             - name: Install dependencies
-              run: npm install
+              run: npm ci --ignore-scripts
 
             - name: Run Eslint
               run: npm run lint
+
+            - name: Install conversation exporter dependencies
+              run: npm ci --prefix tools/conversation-sync --ignore-scripts
+
+            - name: Test conversation exporter without connecting to WhatsApp
+              run: npm test --prefix tools/conversation-sync
+
+            - name: Build the production image
+              run: docker build -f tools/conversation-sync/Dockerfile -t conversation-sync:test .
+
+            - name: Check Chromium in the production image
+              run: |
+                  docker run --rm conversation-sync:test node -e '
+                    const puppeteer = require("puppeteer");
+                    (async () => {
+                      const browser = await puppeteer.launch({executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, args: ["--no-sandbox", "--disable-dev-shm-usage"]});
+                      console.log(await browser.version());
+                      await browser.close();
+                    })().catch(() => process.exit(1));
+                  '

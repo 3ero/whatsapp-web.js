@@ -1,0 +1,19 @@
+services:
+    conversation-sync:
+        build:
+            context: ../..
+            dockerfile: tools/conversation-sync/Dockerfile
+        init: true
+        restart: unless-stopped
+        ports:
+            - '127.0.0.1:3000:3000'
+        environment:
+            SYNC_ACCESS_TOKEN: ${SYNC_ACCESS_TOKEN:?Set a random access token of at least 32 characters}
+            SYNC_INTERVAL_SECONDS: ${SYNC_INTERVAL_SECONDS:-300}
+            SYNC_REPOSITORY: ${SYNC_REPOSITORY:-3ero/whatsapp-markdown-sync}
+        volumes:
+            - archive-data:/data
+        shm_size: 256mb
+
+volumes:
+    archive-data:

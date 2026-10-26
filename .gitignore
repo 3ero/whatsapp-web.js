@@ -78,3 +78,10 @@ typings/
 # IDE's
 .idea
 .vscode
+
+# Private conversation exports and the exporter's browser/database state.
+# The private-repository publication workflow explicitly adds Markdown exports.
+/Messags/*
+!/Messags/.gitkeep
+/.conversation-sync/
+!/tools/conversation-sync/package-lock.json

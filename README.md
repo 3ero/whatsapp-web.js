@@ -21,6 +21,10 @@
 
 ## About
 
+This private copy includes an always-on conversation-to-Markdown exporter. See
+[`tools/conversation-sync/README.md`](tools/conversation-sync/README.md) for the
+private `Messags/` archive, pairing page, and scheduled GitHub publication.
+
 whatsapp‑web.js is a powerful [Node.js][nodejs] library that lets you interact with WhatsApp Web, making it easy to build a dynamic WhatsApp API with nearly all features of the web client. It uses [Puppeteer][puppeteer] to access WhatsApp Web’s internal functions and runs them in a managed browser instance to reduce the risk of being blocked.
 
 ## Links
@@ -133,13 +137,13 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this project except in compliance with the License.  
 You may obtain a copy of the License at <https://www.apache.org/licenses/LICENSE-2.0>.
 
-Unless required by applicable law or agreed to in writing, software  
+Unless required by applicable law or agreed to in writing, software
 
-distributed under the License is distributed on an “AS IS” BASIS,  
+distributed under the License is distributed on an “AS IS” BASIS,
 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-See the License for the specific language governing permissions and  
+See the License for the specific language governing permissions and
 
 limitations under the License.
 
