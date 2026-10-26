@@ -2,7 +2,7 @@ services:
     conversation-sync:
         build:
             context: ../..
-            dockerfile: tools/conversation-sync/Dockerfile
+            dockerfile: Dockerfile
         init: true
         restart: unless-stopped
         ports:

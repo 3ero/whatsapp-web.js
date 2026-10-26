@@ -24,10 +24,17 @@ workflow's temporary `GITHUB_TOKEN` with access to this repository.
 
 ## Deploy the always-on server
 
-The repository contains a Railway configuration and Dockerfile. Deploy the private
+The root Dockerfile lets Railway detect this as a Docker service. Deploy the private
 repository as one persistent service. Create a persistent volume mounted at
 **`/data` before the first WhatsApp pairing**. Use one replica and disable sleeping
 or serverless suspension. Configure these environment variables:
+
+New Railway services use settings configured directly in Railway; new services
+cannot opt into the deprecated `railway.json` configuration format.
+Configure `/healthz` as the health check,
+`ALWAYS` as the restart policy, and watch only application source, package files,
+the root Dockerfile, and `tools/conversation-sync/**`. In particular, commits under
+`Messags/` must not trigger deployments.
 
 | Variable                | Value                                     |
 | ----------------------- | ----------------------------------------- |

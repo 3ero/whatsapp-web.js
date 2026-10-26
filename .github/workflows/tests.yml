@@ -35,7 +35,7 @@ jobs:
               run: npm test --prefix tools/conversation-sync
 
             - name: Build the production image
-              run: docker build -f tools/conversation-sync/Dockerfile -t conversation-sync:test .
+              run: docker build -t conversation-sync:test .
 
             - name: Check Chromium in the production image
               run: |

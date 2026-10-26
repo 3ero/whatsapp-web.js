@@ -1,3 +1,4 @@
+# Root Dockerfile lets Railway detect Docker builds for new services.
 FROM node:22-bookworm-slim
 
 ENV NODE_ENV=production \
