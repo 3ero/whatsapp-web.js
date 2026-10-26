@@ -147,3 +147,9 @@ these isolated exporter tests.
 Live acceptance requires pairing, confirming the first real conversation file,
 checking a subsequent delta and GitHub commit, and confirming session recovery
 after a service restart. Code tests alone do not establish those outcomes.
+
+The upstream dependency versions are retained. During implementation, npm's
+production dependency audit reported high-severity advisories in the upstream
+Puppeteer dependency tree. Updating that browser-control dependency needs a
+separate compatibility check against WhatsApp Web; these tests do not establish
+that the upstream dependencies are free of known vulnerabilities.
