@@ -5,6 +5,7 @@ ENV NODE_ENV=production \
     PUPPETEER_SKIP_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
     CHROME_NO_SANDBOX=true \
+    SYNC_EXCLUSIVE_PROFILE=true \
     SYNC_DATA_DIR=/data/state \
     SYNC_OUTPUT_DIR=/data/Messags \
     PORT=3000

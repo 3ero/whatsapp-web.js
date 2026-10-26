@@ -46,6 +46,12 @@ The Docker image supplies Chromium, Node.js 22, and the required libraries. It
 uses `/data/state` for the database and browser session and `/data/Messags` for
 generated files. Those directories must survive restarts and deployments.
 
+The dedicated Docker container also sets `SYNC_EXCLUSIVE_PROFILE=true`.
+Before launching Chromium, it removes only the three temporary top-level
+`Singleton*` lock files left by a previous container. Cookies, browser storage,
+and the archive database remain intact. Keep one replica and exclusive ownership
+of the volume; do not enable this setting for a profile shared by running browsers.
+
 Expose the service through the host's **HTTPS** domain. The public `/healthz`
 endpoint reports process liveness only; inspect the authenticated status page to
 verify WhatsApp is paired and imports are completing. Open the service URL and

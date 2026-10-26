@@ -10,6 +10,7 @@ const QRCode = require('qrcode');
 const { Client, LocalAuth } = require('../..');
 const { Archive } = require('./archive');
 const { ConversationSync } = require('./sync');
+const { clearBrowserLocks } = require('./session');
 
 function authorized(header, token) {
     if (!header?.startsWith('Basic ')) return false;
@@ -151,6 +152,8 @@ async function main() {
     const outputDir = path.resolve(
         process.env.SYNC_OUTPUT_DIR || path.join(root, 'Messags'),
     );
+    if (process.env.SYNC_EXCLUSIVE_PROFILE === 'true')
+        clearBrowserLocks(dataDir);
     const archive = new Archive({ dataDir, outputDir });
     const client = new Client({
         authStrategy: new LocalAuth({ dataPath: path.join(dataDir, 'auth') }),
@@ -227,10 +230,16 @@ async function main() {
         .then(() => {
             client.pupBrowser.once('disconnected', () => void shutdown(1));
         })
-        .catch(() => {
+        .catch((error) => {
             // Crash/restart on failed initialization; keep the persisted session.
+            const locked =
+                /Singleton|profile appears to be in use|process.*in use/i.test(
+                    String(error?.message || error),
+                );
             console.error(
-                'Browser initialization failed. Check browser configuration and restart the service.',
+                locked
+                    ? 'Browser initialization failed: stale profile lock. Check exclusive-profile recovery.'
+                    : 'Browser initialization failed. Check browser configuration and restart the service.',
             );
             process.exit(1);
         });
