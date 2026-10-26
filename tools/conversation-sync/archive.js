@@ -74,6 +74,17 @@ class Archive {
             );
             CREATE INDEX IF NOT EXISTS message_order ON messages(chat_id, timestamp, id);
         `);
+        if (
+            !this.db
+                .prepare('PRAGMA table_info(chats)')
+                .all()
+                .some((column) => column.name === 'history_complete')
+        ) {
+            // Existing cursors may come from an older cached-messages-only import.
+            this.db.exec(
+                'ALTER TABLE chats ADD COLUMN history_complete INTEGER NOT NULL DEFAULT 0',
+            );
+        }
     }
 
     getChat(id) {
@@ -174,6 +185,9 @@ class Archive {
                     .prepare('UPDATE chats SET cursor = ? WHERE id = ?')
                     .run(newest.id._serialized || newest.id.$1, chat.id);
             }
+            this.db
+                .prepare('UPDATE chats SET history_complete = 1 WHERE id = ?')
+                .run(chat.id);
             this.db.exec('COMMIT');
         } catch (error) {
             this.db.exec('ROLLBACK');

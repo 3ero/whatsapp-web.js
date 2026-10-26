@@ -126,3 +126,17 @@ test('a failed disk write leaves the conversation dirty for retry', (t) => {
     fs.mkdirSync(options.outputDir);
     assert.equal(archive.flush(), 1);
 });
+
+test('legacy archives retain messages and retry full history after migration', (t) => {
+    const { archive, options } = fixture(t);
+    archive.reconcile(chat, [message('one', 'Saved')]);
+    archive.db.exec('ALTER TABLE chats DROP COLUMN history_complete');
+    const migrated = new Archive(options);
+    try {
+        assert.equal(migrated.getChat(chat.id).cursor, 'one');
+        assert.equal(migrated.getChat(chat.id).history_complete, 0);
+        assert.equal(migrated.counts().messages, 1);
+    } finally {
+        migrated.close();
+    }
+});

@@ -83,7 +83,10 @@ class ConversationSync {
     async history(chat) {
         const previous = this.archive.getChat(chatData(chat).id);
         // First import attempts all history WhatsApp Web can provide.
-        if (!previous?.cursor) return chat.fetchMessages({ limit: Infinity });
+        // Nested Infinity becomes null when Puppeteer serializes the options.
+        // A finite limit keeps loadEarlierMsgs running until history is exhausted.
+        if (!previous?.history_complete || !previous.cursor)
+            return chat.fetchMessages({ limit: Number.MAX_SAFE_INTEGER });
         let limit = this.pageSize;
         for (;;) {
             if (this.stopping || !this.ready) throw new Error('Disconnected');

@@ -64,7 +64,12 @@ test('new conversations import all available history and failed chats retry with
     const chat = {
         id: { _serialized: 'chat@c.us' },
         name: 'Chat',
-        fetchMessages: async () => [message(1)],
+        fetchMessages: async (options) => {
+            // The real browser receives nested arguments through JSON/CDP.
+            const received = JSON.parse(JSON.stringify(options));
+            assert.equal(received.limit, Number.MAX_SAFE_INTEGER);
+            return [message(1)];
+        },
     };
     client.getChats = async () => [
         chat,
@@ -79,8 +84,30 @@ test('new conversations import all available history and failed chats retry with
     assert.equal(archive.counts().messages, 1);
     assert.equal(sync.status.failures, 1);
     assert.equal(archive.getChat('broken@c.us'), undefined);
+    chat.fetchMessages = async () => [message(1)];
     client.getChats = async () => [chat];
     assert.equal(await sync.run(), true);
+});
+
+test('a legacy cursor does not skip the corrected first history import', async (t) => {
+    const { archive, sync } = fixture(t);
+    const info = { id: 'chat@c.us', name: 'Chat' };
+    archive.reconcile(info, [message(2)]);
+    archive.db
+        .prepare('UPDATE chats SET history_complete = 0 WHERE id = ?')
+        .run(info.id);
+    let limit;
+    const messages = await sync.history({
+        id: { _serialized: info.id },
+        fetchMessages: async (options) => {
+            limit = JSON.parse(JSON.stringify(options)).limit;
+            return [message(1), message(2)];
+        },
+    });
+    assert.equal(limit, Number.MAX_SAFE_INTEGER);
+    archive.reconcile(info, messages);
+    assert.equal(archive.counts().messages, 2);
+    assert.equal(archive.getChat(info.id).history_complete, 1);
 });
 
 test('live outgoing messages, edits and deletions are persisted before the scheduled flush', (t) => {
